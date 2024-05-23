@@ -12,26 +12,32 @@
 
         nav > div > a {
             text-decoration: none;
-            border: 1px solid black;
-            padding: 12px 10px;
-            border-radius: 25px;
-            width: auto;
-            box-shadow: 0 0 5px rgb(110, 110, 110);
             color: black;
+        }
+
+        nav>div{
+            margin-top: 20px;
+            display: flex;
+            width: 135px;
+            align-items: center;
+            margin-left: 10px;
+            box-shadow: 0 0 5px rgb(110, 110, 110);
+            border-radius: 25px;
         }
 
         nav {
             border-top: 1px solid gray;
             border-right: 1px solid gray;
             display: flex;
-            justify-content: center;
+            height: 50vh;
+            margin:0 0 0 2px;
             flex-direction: column;
             width: 16vw;
         }
 
-        a>img {
+        div>img {
             width: 25px;
-            border: 1px solid black;
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -39,9 +45,9 @@
 <body>
     <h1>Administración del calendario</h1>
     <nav>
-        <div> <img src="../recursos/imagenes/agregar.png" alt=""> <a href="">Crear Evento</a></div>
-
-        <p></p>
+        <div>
+             <img src="../recursos/imagenes/agregar.png" alt=""> <a href="">Crear Evento</a>
+            </div>
     </nav>
 
 
