@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Temas</title>
+    <script src="../js/utilidades.js"></script>
+    <script>
+        function adicionarNombreATabla() {
+            var nombreTematico = document.getElementById("nombreTematico");
+
+            if (nombreTematico.value.length > 0) {
+                var tablanombresTematicos = document.getElementById("nombresTematicos");
+                var fila = tablanombresTematicos.insertRow(-1);
+                var columna1 = fila.insertCell(0);
+                var textoColuma = document.createTextNode(nombreTematico.value);
+                columna1.appendChild(textoColuma);
+                nombreTematico.value = "";
+                var botonEditar = crearNodoConTexto("button", "Editar");
+
+                var botonEliminar = crearNodoConTexto("button", "Eliminar");
+                botonEliminar.addEventListener("click", function () {
+                    fila.parentNode.removeChild(fila);
+                });
+
+
+                var columna2 = fila.insertCell(1);
+                columna2.appendChild(botonEditar);
+                columna2.appendChild(botonEliminar);
+
+
+
+            } else {
+                alert("Debe digitar un nombre para ser adicionado");
+            }
+            nombreTematico.focus()
+
+        }
+
+        function adicionarTelefono() {
+
+            if (telefono.value.length > 0) {
+                crearLista = document.createElement("li");
+                crearTexto = document.createTextNode(telefono.value);
+                crearLista.appendChild(crearTexto);
+                lista = document.getElementById("lista");
+                lista.appendChild(crearLista);
+                telefono.value="";
+            } else {
+                alert("Debe digitar un telefono para ser adicionado");
+
+            }
+            telefono.focus();
+        }
+
+
+    </script>
+</head>
+
+<body>
+    Nombres
+    <input id="nombreTematico" type="text">
+    <button onclick="adicionarNombreATabla()">Adicionar</button>
+    <table id="nombresTematicos" border="1">
+        <caption>Nombres adicionados</caption>
+        <tr>
+            <td>Nombre</td>
+            <td>Acciones</td>
+        </tr>
+    </table>
+    <br>
+    Telefono
+    <input id="telefono" type="text">
+    <button onclick="adicionarTelefono()">Adicionar</button>
+    <ul id="lista">
+
+    </ul>
+</body>
+
+</html>

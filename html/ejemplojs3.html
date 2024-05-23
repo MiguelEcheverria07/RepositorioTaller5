@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo dinamico</title>
+    <script src="../js/utilidades.js">
+    </script>
+</head>
+
+<body>
+    <button onclick="crearUI()">Presioname</button>
+    <script>
+        function crearUI() {
+            var h1 = crearNodoConTexto('h1', 'Ejemplo JS');
+            var p = crearNodoConTexto("p", "Este es un ejemplo de JavaScript");
+            var imagen = crearNodoImagen("cielo.png", "Cielo PNG", "45%");
+            var ol = crearNodo("ol");
+            var liUno = crearNodoConTexto("li", "Apple");
+            var liDos = crearNodoConTexto("li", "PineApple");
+            var liTres = crearNodoConTexto("li", "Orange");
+            liUno.setAttribute("class", "tipoLetra");
+
+            adicionarNodoABody(h1);
+            adicionarNodoABody(p);
+            adicionarNodoABody(imagen);
+
+            adicionarNodoABody(ol);
+            adicionarNodoAContenedor(liUno, ol);
+            adicionarNodoAContenedor(liDos, ol);
+            adicionarNodoAContenedor(liTres, ol);
+        }
+    </script>
+</body>
+
+</html>
