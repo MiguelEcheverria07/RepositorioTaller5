@@ -1,56 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestionar eventos</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        nav > div > a {
-            text-decoration: none;
-            color: black;
-        }
-
-        nav>div{
-            margin-top: 20px;
-            display: flex;
-            width: 135px;
-            align-items: center;
-            margin-left: 10px;
-            box-shadow: 0 0 5px rgb(110, 110, 110);
-            border-radius: 25px;
-        }
-
-        nav {
-            border-top: 1px solid gray;
-            border-right: 1px solid gray;
-            display: flex;
-            height: 50vh;
-            margin:0 0 0 2px;
-            flex-direction: column;
-            width: 16vw;
-        }
-
-        div>img {
-            width: 25px;
-            margin-left: 10px;
-        }
-    </style>
+    <title>Calendario de Eventos</title>
+    <link rel="stylesheet" href="../css/estilos1.css">
 </head>
-
 <body>
-    <h1>Administración del calendario</h1>
-    <nav>
-        <div>
-             <img src="../recursos/imagenes/agregar.png" alt=""> <a href="">Crear Evento</a>
+    <div class="calendar">
+        <header>
+            <h1>Calendario de Eventos</h1>
+            <div class="view-options">
+                <button id="view-annual">Anual</button>
+                <button id="view-monthly">Mensual</button>
+                <button id="view-daily">Diario</button>
             </div>
-    </nav>
-
-
+        </header>
+        <main id="calendar-view">
+            <!-- Vistas del calendario se generarán aquí -->
+        </main>
+        <div id="event-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form id="event-form">
+                    <label for="event-date">Fecha:</label>
+                    <input type="date" id="event-date" name="date" required>
+                    <label for="event-time">Hora:</label>
+                    <select id="event-time" name="time" required>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="10:30">10:30 AM</option>
+                        <!-- Más opciones de hora -->
+                    </select>
+                    <label for="event-description">Descripción:</label>
+                    <textarea id="event-description" name="description" required></textarea>
+                    <label for="event-participants">Participantes:</label>
+                    <input type="text" id="event-participants" name="participants" required>
+                    <button type="submit">Guardar Evento</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="../js/script.js"></script>
 </body>
-
 </html>
