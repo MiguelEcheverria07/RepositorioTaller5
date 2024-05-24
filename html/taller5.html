@@ -7,39 +7,12 @@
     <link rel="stylesheet" href="../css/estilos.css">
 </head>
 <body>
-    <div class="calendar">
-        <header>
-            <h1>Calendario de Eventos</h1>
-            <div class="view-options">
-                <button id="view-annual">Anual</button>
-                <button id="view-monthly">Mensual</button>
-                <button id="view-daily">Diario</button>
-            </div>
-        </header>
-        <main id="calendar-view">
-            <!-- Vistas del calendario se generarán aquí -->
-        </main>
-        <div id="event-modal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <form id="event-form">
-                    <label for="event-date">Fecha:</label>
-                    <input type="date" id="event-date" name="date" required>
-                    <label for="event-time">Hora:</label>
-                    <select id="event-time" name="time" required>
-                        <option value="10:00">10:00 AM</option>
-                        <option value="10:30">10:30 AM</option>
-                        <!-- Más opciones de hora -->
-                    </select>
-                    <label for="event-description">Descripción:</label>
-                    <textarea id="event-description" name="description" required></textarea>
-                    <label for="event-participants">Participantes:</label>
-                    <input type="text" id="event-participants" name="participants" required>
-                    <button type="submit">Guardar Evento</button>
-                </form>
-            </div>
+    <div class="header">
+        <button id="btnAnual">Anual</button>
+        <button id="btnMensual">Mensual</button>
+        <button id="btnDiario">Diario</button>
         </div>
-    </div>
+        <div id="calendario"></div>
     <script src="../js/script.js"></script>
 </body>
 </html>
