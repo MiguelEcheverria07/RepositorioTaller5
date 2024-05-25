@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendario de Eventos</title>
     <link rel="stylesheet" href="css/estilos.css">
 </head>
+
 <body>
     <div class="header">
         <span>Vistas:</span>
         <button id="btnAnual">Anual</button>
         <button id="btnMensual">Mensual</button>
-        <button id="btnDiario">Diario</button> 
+        <button id="btnDiario">Diario</button>
         <button id="btnCrearEvento">Gestionar Eventos</button>
+    </div>
+    <div id="vistaDiaria" style="display:none;">
+        <div id="horas"></div>
     </div>
     <div id="calendario"></div>
     <div id="formularioEvento" style="display:none;">
@@ -31,12 +36,8 @@
         </form>
 
     </div>
-    <div id="vistaDiaria" style="display:none;">
-        <div id="horas"></div>
-    </div>
     <div id="listaEventos" style="display: none;">
         <h2>Eventos</h2>
-
         <table id="eventosTable">
             <thead>
                 <tr>
@@ -53,6 +54,5 @@
     <script type="module" src="js/gestioncalendario.js"></script>
     <script type="module" src="js/Evento.js"></script>
 </body>
-
 
 </html>
