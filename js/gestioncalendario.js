@@ -1,5 +1,7 @@
+import Evento from './Evento.js';
+
 // Variables globales
-let vistaActual = 'mensual'; // Ahora la vista predeterminada es 'mensual'
+let vistaActual = 'mensual';
 const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const diasPorMes = {
   1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30,
@@ -7,12 +9,45 @@ const diasPorMes = {
 };
 const diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const diasSemanaAnual = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+const selectHoras = document.getElementById('hora');
 let fechaActual = new Date();
+let divDiasMesActual = null;
+let eventoEditando = null; 
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  actualizarCalendario();
+  mostrarEventosEnTabla();
+});
+
+for (let i = 0; i < 24; i++) {
+  for (let j = 0; j < 60; j += 30) {
+    const hora = `${String(i).padStart(2, '0')}:${String(j).padStart(2, '0')}`;
+    const option = document.createElement('option');
+    option.value = hora;
+    option.textContent = hora;
+    selectHoras.appendChild(option);
+  }
+}
 
 // Función para cambiar la vista del calendario
 function cambiarVista(vista) {
   vistaActual = vista;
-  // Actualizar la vista del calendario
+  const calendario = document.getElementById('calendario');
+  const formularioEvento = document.getElementById('formularioEvento');
+  const listaEventos = document.getElementById('listaEventos');
+
+  // Ocultar todas las vistas
+  calendario.style.display = 'none';
+  formularioEvento.style.display = 'none';
+  listaEventos.style.display = 'none'
+  // Mostrar la vista correspondiente
+  if (vista === 'anual' || vista === 'mensual' || vista === 'diario') {
+    calendario.style.display = 'flex';
+  } else if (vista === 'formularioEvento') {
+    formularioEvento.style.display = 'block';
+    listaEventos.style.display = 'block';
+  } 
   actualizarCalendario();
 }
 
@@ -26,6 +61,7 @@ function obtenerDiaDeLaSemana(mes) {
 function actualizarCalendario() {
   const calendario = document.getElementById('calendario');
   calendario.innerHTML = '';
+  const eventos = Evento.getAllEventos();
 
   if (vistaActual === 'anual') {
     const divDiasSemanaAnual = document.createElement('div');
@@ -49,7 +85,7 @@ function actualizarCalendario() {
       divMes.appendChild(tituloMes);
 
       // Contenedor de días de la semana
-      divMes.appendChild(divDiasSemanaAnual.cloneNode(true)); // Clonar días de la semana
+      divMes.appendChild(divDiasSemanaAnual.cloneNode(true));
 
       // Contenedor de días
       const divDias = document.createElement('div');
@@ -69,6 +105,11 @@ function actualizarCalendario() {
         const divDia = document.createElement('div');
         divDia.className = 'dia';
         divDia.textContent = dia;
+        const fecha = `${new Date().getFullYear()}-${String(i + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        const eventosDelDia = eventos.filter(evento => evento.fecha === fecha);
+        if (eventosDelDia.length > 0) {
+          divDia.style.backgroundColor = '#ff5733';
+        }
         divDias.appendChild(divDia);
       }
 
@@ -79,7 +120,7 @@ function actualizarCalendario() {
     const selectMes = document.createElement('select');
     selectMes.addEventListener('change', (event) => {
       const mesSeleccionado = event.target.value;
-      mostrarDiasDelMes(mesSeleccionado);
+      mostrarDiasDelMes(mesSeleccionado, eventos);
     });
     for (let i = 0; i < meses.length; i++) {
       const mes = meses[i];
@@ -95,15 +136,39 @@ function actualizarCalendario() {
 
     // Seleccionar mayo por defecto
     selectMes.value = 5;
-    mostrarDiasDelMes(5);
+    mostrarDiasDelMes(5, eventos);
   } else if (vistaActual === 'diario') {
+    const horas = document.getElementById('horas');
+    horas.innerHTML = '';
+
+    const fecha = `${fechaActual.getFullYear()}-${String(fechaActual.getMonth() + 1).padStart(2, '0')}-${String(fechaActual.getDate()).padStart(2, '0')}`;
+    const eventosDelDia = obtenerEventosDelDia(fecha);
+
+    for (let i = 0; i < 24; i++) {
+      const divHora = document.createElement('div');
+      divHora.className = 'hora';
+      divHora.textContent = `${i}:00 - ${i + 1}:00`;
+
+      const eventosEnHora = eventosDelDia.filter(evento => {
+        const [eventoHora] = evento.hora.split(':');
+        return parseInt(eventoHora) === i;
+      });
+
+      if (eventosEnHora.length > 0) {
+        divHora.style.backgroundColor = '#ff5733';
+        divHora.innerHTML += '<br>';
+        divHora.innerHTML += eventosEnHora.map(evento => evento.hora).join('<br>');
+      }
+
+      horas.appendChild(divHora);
+    }
     mostrarDiaActual();
   }
+
 }
 
-let divDiasMesActual = null;
-
-function mostrarDiasDelMes(mesSeleccionado) {
+// Función para mostrar los días del mes en la vista mensual
+function mostrarDiasDelMes(mesSeleccionado, eventos) {
   const diasEnMes = diasPorMes[mesSeleccionado];
   const primerDia = obtenerDiaDeLaSemana(mesSeleccionado);
   const divDias = document.createElement('div');
@@ -135,6 +200,20 @@ function mostrarDiasDelMes(mesSeleccionado) {
     const divDia = document.createElement('div');
     divDia.className = 'dia';
     divDia.textContent = dia;
+
+    const eventosDelDia = eventos.filter(evento => {
+      const [eventoAnio, eventoMes, eventoDia] = evento.fecha.split('-').map(Number);
+      return eventoAnio === new Date().getFullYear() && eventoMes == mesSeleccionado && eventoDia == dia;
+    });
+    if (eventosDelDia.length > 0) {
+      divDia.style.backgroundColor = '#ff5733';
+      divDia.innerHTML += '<br>'; 
+      divDia.innerHTML += eventosDelDia.map(evento => {
+        const horaFin = incrementarMediaHora(evento.hora);
+        return `<span><br>${evento.hora} - ${horaFin}<br>${evento.descripcion}</span>`;
+    }).join('');
+    }
+
     divFila.appendChild(divDia);
     if ((dia + primerDia) % 7 === 0) {
       divDias.appendChild(divFila);
@@ -145,13 +224,27 @@ function mostrarDiasDelMes(mesSeleccionado) {
   if (divFila.childElementCount > 0) {
     divDias.appendChild(divFila);
   }
-  // Verificar si divDiasMesActual es hijo del calendario antes de intentar eliminarlo
   if (divDiasMesActual && divDiasMesActual.parentNode === calendario) {
     calendario.removeChild(divDiasMesActual);
   }
   calendario.appendChild(divDias);
   divDiasMesActual = divDias;
 }
+function incrementarMediaHora(hora) {
+  let [horas, minutos] = hora.split(':').map(Number);
+  minutos += 30;
+  if (minutos >= 60) {
+      horas += 1;
+      minutos -= 60;
+  }
+  horas = horas < 10 ? `0${horas}` : horas;
+  minutos = minutos < 10 ? `0${minutos}` : minutos;
+  return `${horas}:${minutos}`;
+}
+// Llamar a la función para mostrar los días del mes actual al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+  mostrarDiasDelMes(new Date().getMonth() + 1, Evento.getAllEventos());
+});
 
 
 function mostrarDiaActual() {
@@ -169,10 +262,29 @@ function mostrarDiaActual() {
 
   const horas = document.createElement('div');
   horas.className = 'horas';
+
+  const fecha = `${fechaActual.getFullYear()}-${String(fechaActual.getMonth() + 1).padStart(2, '0')}-${String(fechaActual.getDate()).padStart(2, '0')}`;
+  const eventosDelDia = obtenerEventosDelDia(fecha);
+
   for (let i = 0; i < 24; i++) {
     const divHora = document.createElement('div');
     divHora.className = 'hora';
     divHora.textContent = `${i}:00 - ${i + 1}:00`;
+
+    const eventosEnHora = eventosDelDia.filter(evento => {
+      const [eventoHora] = evento.hora.split(':');
+      return parseInt(eventoHora) === i;
+    });
+
+    if (eventosEnHora.length > 0) {
+      divHora.style.backgroundColor = '#ff5733';
+      divHora.innerHTML += '<br>';
+      divHora.innerHTML += eventosEnHora.map(evento => {
+          const horaFin = incrementarMediaHora(evento.hora);
+          return `<span><br>${evento.hora} - ${horaFin}<br>${evento.descripcion}</span>`;
+      }).join('');
+  }
+
     horas.appendChild(divHora);
   }
   calendario.appendChild(horas);
@@ -200,8 +312,107 @@ function mostrarDiaActual() {
   calendario.appendChild(divNavegacion);
 }
 
+function obtenerEventosDelDia(fecha) {
+  const eventos = Evento.getAllEventos();
+  return eventos.filter(evento => evento.fecha === fecha);
+}
+
 actualizarCalendario();
+
+function mostrarEventosEnTabla() {
+  const eventos = Evento.getAllEventos();
+  const tabla = document.getElementById('eventosTable');
+  tabla.innerHTML = '';
+
+  eventos.forEach(evento => {
+    const fila = document.createElement('tr');
+    
+    const celdaFecha = document.createElement('td');
+    celdaFecha.textContent = evento.fecha;
+    fila.appendChild(celdaFecha);
+
+    const celdaHora = document.createElement('td');
+    celdaHora.textContent = evento.hora;
+    fila.appendChild(celdaHora);
+
+    const celdaDescripcion = document.createElement('td');
+    celdaDescripcion.textContent = evento.descripcion;
+    fila.appendChild(celdaDescripcion);
+
+    const celdaParticipantes = document.createElement('td');
+    celdaParticipantes.textContent = evento.participantes;
+    fila.appendChild(celdaParticipantes);
+
+    const celdaAcciones = document.createElement('td');
+    const btnEditar = document.createElement('button');
+    btnEditar.textContent = 'Editar';
+    btnEditar.addEventListener('click', () => {
+      editarEvento(evento);
+    });
+
+    const btnEliminar = document.createElement('button');
+    btnEliminar.textContent = 'Eliminar';
+    btnEliminar.addEventListener('click', () => {
+      eliminarEvento(evento.fecha, evento.hora);
+    });
+
+    celdaAcciones.appendChild(btnEditar);
+    celdaAcciones.appendChild(btnEliminar);
+    fila.appendChild(celdaAcciones);
+
+    tabla.appendChild(fila);
+  });
+}
+
+function editarEvento(evento) {
+  eventoEditando = { ...evento }; 
+  document.getElementById('fecha').value = evento.fecha;
+  document.getElementById('hora').value = evento.hora;
+  document.getElementById('descripcion').value = evento.descripcion;
+  document.getElementById('participantes').value = evento.participantes;
+
+  // Mostrar el formulario de evento y ocultar la tabla de eventos
+  document.getElementById('formularioEvento').style.display = 'block';
+}
+
+function eliminarEvento(fecha, hora) {
+  Evento.deleteEvento(fecha, hora);
+  mostrarEventosEnTabla();
+  actualizarCalendario();
+}
 
 document.getElementById('btnAnual').addEventListener('click', () => cambiarVista('anual'));
 document.getElementById('btnMensual').addEventListener('click', () => cambiarVista('mensual'));
 document.getElementById('btnDiario').addEventListener('click', () => cambiarVista('diario'));
+document.getElementById('btnCrearEvento').addEventListener('click', () => {
+  document.getElementById('calendario').style.display = 'none';
+  document.getElementById('formularioEvento').style.display = 'block';
+  listaEventos.style.display = 'inline-block';
+});
+
+document.getElementById('eventoForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const fecha = document.getElementById('fecha').value;
+  const hora = document.getElementById('hora').value;
+  const descripcionInput = document.getElementById('descripcion');
+  var descripcion = descripcionInput.value;
+  var participantesInput = document.getElementById('participantes');
+  var participantes = participantesInput.value;
+
+  if (eventoEditando) {
+    const updatedEvento = new Evento(fecha, hora, descripcion, participantes);
+    Evento.updateEvento(eventoEditando.fecha, eventoEditando.hora, updatedEvento);
+    eventoEditando = null; 
+  } else {
+    const nuevoEvento = new Evento(fecha, hora, descripcion, participantes);
+    Evento.saveEvento(nuevoEvento);
+  }
+
+  descripcionInput.value = "";
+  participantesInput.value = "";
+  descripcionInput.focus();
+
+  actualizarCalendario();
+  mostrarEventosEnTabla();
+});
+

@@ -8,11 +8,51 @@
 </head>
 <body>
     <div class="header">
+        <span>Vistas:</span>
         <button id="btnAnual">Anual</button>
         <button id="btnMensual">Mensual</button>
-        <button id="btnDiario">Diario</button>
-        </div>
-        <div id="calendario"></div>
-    <script src="js/gestioncalendario.js"></script>
+        <button id="btnDiario">Diario</button> 
+        <button id="btnCrearEvento">Gestionar Eventos</button>
+    </div>
+    <div id="calendario"></div>
+    <div id="formularioEvento" style="display:none;">
+        <h2>Crear Evento</h2>
+        <form id="eventoForm">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required>
+            <label for="hora">Hora de inicio:</label>
+            <select id="hora" name="hora">
+            </select>
+            <label for="descripcion">Descripción:</label>
+            <input type="text" id="descripcion" name="descripcion" required>
+            <label for="participantes">Participantes:</label>
+            <input type="text" id="participantes" name="participantes" required> <br><br>
+            <button type="submit">Guardar Evento</button>
+        </form>
+
+    </div>
+    <div id="vistaDiaria" style="display:none;">
+        <div id="horas"></div>
+    </div>
+    <div id="listaEventos" style="display: none;">
+        <h2>Eventos</h2>
+
+        <table id="eventosTable">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Descripción</th>
+                    <th>Participantes</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script type="module" src="js/gestioncalendario.js"></script>
+    <script type="module" src="js/Evento.js"></script>
 </body>
+
+
 </html>
