@@ -79,11 +79,18 @@ function actualizarCalendario() {
         const divDia = document.createElement('div');
         divDia.className = 'dia';
         divDia.textContent = dia;
+
         const fecha = `${new Date().getFullYear()}-${String(i + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
         const eventosDelDia = eventos.filter(evento => evento.fecha === fecha);
         if (eventosDelDia.length > 0) {
           divDia.style.backgroundColor = '#ff5733';
         }
+
+        divDia.addEventListener('click', () => {
+          cambiarVista('formularioEvento');
+          document.getElementById('fecha').value = fecha;
+        });
+
         divDias.appendChild(divDia);
       }
       divMes.appendChild(divDias);
@@ -107,8 +114,8 @@ function actualizarCalendario() {
     divMes.appendChild(selectMes);
     calendario.appendChild(divMes);
 
-    selectMes.value = 5;
-    mostrarDiasDelMes(5, eventos);
+    selectMes.value = new Date().getMonth() + 1;
+    mostrarDiasDelMes(new Date().getMonth() + 1, eventos);
   } else if (vistaActual === 'diario') {
     const horas = document.getElementById('horas');
     horas.innerHTML = '';
@@ -117,7 +124,7 @@ function actualizarCalendario() {
     const eventosDelDia = obtenerEventosDelDia(fecha);
 
     for (let i = 0; i < 24; i++) {
-      const divHora = document.createElement('div');
+      var divHora = document.createElement('div');
       divHora.className = 'hora';
       divHora.textContent = `${i}:00 - ${i + 1}:00`;
 
@@ -129,7 +136,7 @@ function actualizarCalendario() {
       if (eventosEnHora.length > 0) {
         divHora.style.backgroundColor = '#ff5733';
         divHora.innerHTML += '<br>';
-        divHora.innerHTML += eventosEnHora.map(evento => evento.hora).join('<br>');
+        divHora.innerHTML += eventosEnHora.map(evento => `<span>${evento.hora} - ${incrementarMediaHora(evento.hora)}<br>${evento.descripcion}</span>`).join('<br>');
       }
       horas.appendChild(divHora);
     }
@@ -166,6 +173,11 @@ function mostrarDiasDelMes(mesSeleccionado, eventos) {
     const divDia = document.createElement('div');
     divDia.className = 'dia';
     divDia.textContent = dia;
+
+    divDia.addEventListener('click', () => {
+      cambiarVista('formularioEvento');
+      document.getElementById('fecha').value = `${new Date().getFullYear()}-${String(mesSeleccionado).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+    });
 
     const eventosDelDia = eventos.filter(evento => {
       const [eventoAnio, eventoMes, eventoDia] = evento.fecha.split('-').map(Number);
@@ -234,6 +246,13 @@ function mostrarDiaActual() {
         return `<span><br>${evento.hora} - ${horaFin}<br>${evento.descripcion}</span>`;
       }).join('');
     }
+
+    divHora.addEventListener('click', () => {
+      cambiarVista('formularioEvento');
+      document.getElementById('fecha').value = fecha;
+      document.getElementById('hora').value = `${String(i).padStart(2, '0')}:00`;
+    });
+
     horas.appendChild(divHora);
   }
   calendario.appendChild(horas);

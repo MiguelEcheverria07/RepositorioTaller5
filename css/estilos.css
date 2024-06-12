@@ -8,6 +8,10 @@ body {
   padding: 20px;
 }
 
+input:focus, select:focus{
+  outline: none;
+}
+
 button {
   background-color: #333;
   color: #fff;
@@ -85,6 +89,10 @@ button:hover {
   text-align: center;
 }
 
+.dia{
+  cursor: pointer;
+}
+
 .horas {
   display: flex;
   flex-wrap: wrap;
@@ -97,6 +105,7 @@ button:hover {
   background-color: #333;
   border-radius: 3px;
   text-align: center;
+  cursor: pointer;
 }
 
 select {
